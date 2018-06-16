@@ -55,10 +55,14 @@ class UserViewSet(viewsets.ModelViewSet):
         user = authenticate(username=username, password=password)
 
         if not user:
-            return JsonResponse({"message": 'user does not exist'})
+            return Response({"message": username + ' does not exist'})
         else:
 
             login(request, user)
             # serializer = UserSerializer(user)
             serializer = UserSerializer(user, context={'request': request})
             return Response(serializer.data)
+
+    @action(methods=['post'], detail=False)
+    def logout(self, request):
+        logout(request)

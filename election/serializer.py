@@ -1,6 +1,7 @@
 from election.models import Student, Vote, Department, Faculty, ElectionSession, ElectionType
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from django.contrib.auth.hashers import make_password
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,7 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         student_data = validated_data.pop('student')
         user = User.objects.create(
-            **validated_data
+            username = validated_data['username'],
+            password = make_password(validated_data['password'])
         )
         print(user)
         student = Student.objects.create(

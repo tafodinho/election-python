@@ -14,7 +14,7 @@ class Department(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, related_name='student', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='student', on_delete=models.CASCADE, )
     name = models.CharField(max_length = 140)
     matricule = models.CharField(max_length = 140)
     level = models.IntegerField()
