@@ -5,7 +5,7 @@ from rest_framework import serializers
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = ('name', 'matricule', 'level', 'department', 'date')
 
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,3 +36,21 @@ class ElectionTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+class UserSerializer(serializers.ModelSerializer):
+    student = StudentSerializer(required=True)
+
+    class Meta:
+        model = User
+        fields = ('id','username', 'password', 'student', 'email')
+
+    def create(self, validated_data):
+        student_data = validated_data.pop('student')
+        user = User.objects.create(
+            **validated_data
+        )
+        print(user)
+        student = Student.objects.create(
+            user = user, **student_data
+        )
+
+        return user
