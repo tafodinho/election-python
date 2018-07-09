@@ -10,6 +10,7 @@ router.register('faculties', views.FacultyViewSet)
 router.register('departments', views.DepartmentViewSet)
 router.register('election_types', views.ElectionTypeViewSet)
 router.register('election_session', views.ElectionSessionViewSet)
+router.register('candidates', views.CandidateViewSet)
 router.register('users', views.UserViewSet);
 
 schema_view = get_schema_view(title='Pastebin API')

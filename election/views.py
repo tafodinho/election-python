@@ -1,10 +1,10 @@
-from rest_framework import permissions
+from rest_framework import permissions, status
 from django.contrib.auth.models import User
 from rest_framework import viewsets, authentication, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from election.models import Student, Vote, Department, Faculty, ElectionSession, ElectionType
-from election.serializer import UserSerializer, StudentSerializer, VoteSerializer, DepartmentSerializer, FacultySerializer, ElectionSessionSerializer, ElectionTypeSerializer, ElectionTypeSerializer
+from election.models import Student, Vote, Department, Faculty, ElectionSession, ElectionType, Candidate
+from election.serializer import UserSerializer, StudentSerializer, VoteSerializer, DepartmentSerializer, CandidateSerializer, FacultySerializer, ElectionSessionSerializer, ElectionTypeSerializer, ElectionTypeSerializer
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.contrib.auth import ( authenticate, get_user_model, login, logout)
 from rest_framework.renderers import JSONRenderer
@@ -33,10 +33,14 @@ class ElectionTypeViewSet(viewsets.ModelViewSet):
     queryset = ElectionType.objects.all()
     serializer_class = ElectionTypeSerializer
 
+class CandidateViewSet(viewsets.ModelViewSet):
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    # authentication_classes = (SessionAuthentication, BasicAuthentication)
     # renderer_classes = (JSONRenderer, )
 
     def create(self, request):
@@ -57,9 +61,8 @@ class UserViewSet(viewsets.ModelViewSet):
         user = authenticate(username=username, password=password)
 
         if not user:
-            return Response({})
+            return Response({'message': 'incorrect credentials'}, status=status.HTTP_404_NOT_FOUND)
         else:
-
             login(request, user)
             # serializer = UserSerializer(user)
             serializer = UserSerializer(user, context={'request': request})

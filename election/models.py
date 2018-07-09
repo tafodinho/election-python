@@ -14,20 +14,25 @@ class Department(models.Model):
 
 
 class Student(models.Model):
-    user = models.OneToOneField(User, related_name='student', on_delete=models.CASCADE, )
+    user = models.OneToOneField(User, related_name='student', on_delete=models.CASCADE)
     name = models.CharField(max_length = 140)
     matricule = models.CharField(max_length = 140)
     level = models.IntegerField()
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, related_name='student', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
 class User(models.Model):
     is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
 
+class Candidate(models.Model):
+    student = models.OneToOneField(Student, related_name='candidate', on_delete=models.CASCADE)
+    position = models.CharField(max_length = 140)
+    date = models.DateTimeField(auto_now_add=True)
+
 class Vote(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    candidate_id = models.IntegerField()
+    student = models.ForeignKey(Student, related_name='vote', on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, related_name='vote', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
 class ElectionSession(models.Model):
