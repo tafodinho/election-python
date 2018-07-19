@@ -33,7 +33,7 @@ class ElectionTypeSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
 class CandidateSerializer(serializers.ModelSerializer):
-    student = StudentSerializer(required=True)
+    student = StudentSerializer(required=False)
 
     class Meta:
         model = Candidate

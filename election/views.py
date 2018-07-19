@@ -17,6 +17,49 @@ class VoteViewSet(viewsets.ModelViewSet):
     queryset = Vote.objects.all()
     serializer_class = VoteSerializer
 
+    @action(methods=['get'], detail=False)
+    def result(self, request):
+        candidates = Candidate.objects.all()
+        result = []
+
+        for candidate in candidates:
+            vote = Vote.objects.filter(candidate__id=candidate.id).count()
+            result.append({
+                "id": candidate.id,
+                "name": candidate.student.name,
+                "vote": vote,
+                "level": candidate.student.level,
+                "department": candidate.student.department.name,
+                "matricule": candidate.student.matricule,
+                "position": candidate.position
+            })
+        result.sort(key=lambda x: int(x["vote"]), reverse=True)
+        return Response(result)
+
+    @action(methods=['get'], detail=False)
+    def candidates(self, request):
+        try:
+            print(request.query_params['position'])
+            data = request.query_params['position']
+            candidates = Candidate.objects.filter(position=data)
+            result = []
+            for candidate in candidates:
+                vote = Vote.objects.filter(candidate__id=candidate.id).count()
+                result.append({
+                    "id": candidate.id,
+                    "name": candidate.student.name,
+                    "vote": vote,
+                    "level": candidate.student.level,
+                    "department": candidate.student.department.name,
+                    "matricule": candidate.student.matricule,
+                    "position": candidate.position
+                })
+            result.sort(key=lambda x: int(x["vote"]), reverse=True)
+            return Response(result)
+        except Exception as e:
+            return Response({"error": e.args})
+
+
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
@@ -71,3 +114,4 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False)
     def logout(self, request):
         logout(request)
+        return Response({"message": "Logout Success"}, status=status.HTTP_201_CREATED)
